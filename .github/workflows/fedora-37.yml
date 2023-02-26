@@ -9,6 +9,9 @@ on: # yamllint disable-line rule:truthy
   pull_request:
     branches: []
 
+concurrency:
+  group: dns
+
 jobs:
   ansible-ci:
     runs-on: ubuntu-latest
