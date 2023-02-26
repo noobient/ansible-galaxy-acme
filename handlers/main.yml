@@ -1,0 +1,5 @@
+---
+- name: Restart cron service
+  systemd:
+    name: "cron{% if ansible_os_family == 'RedHat' %}d{% endif %}.service"
+    state: restarted

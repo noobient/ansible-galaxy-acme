@@ -1,0 +1,25 @@
+---
+- name: Obtain initial certs
+  command:
+    cmd: "{{ acme_sh_dir }}/acme.sh {% if eff_staging %}--staging{% else %}--server letsencrypt{% endif %} --keylength 4096 --issue --dns dns_{{ provider }} --dnssleep {{ eff_sleep }} --force -d {{ domain }}{% if eff_wildcard %} -d *.{{ domain }}{% endif %}"
+    creates: "/root/.acme.sh/{{ domain }}/fullchain.cer"
+  environment: "{{ credential }}"
+
+- name: Check obtained certs
+  command:
+    cmd: "{{ acme_sh_dir }}/acme.sh --info -d {{ domain }}"
+  changed_when: false
+  register: acme_sh_info
+
+- debug:
+    msg: "{{ acme_sh_info.stdout_lines }}"
+
+- name: Deploy acme.sh cronjob
+  template:
+    src: acme.j2
+    dest: "/etc/cron.d/acme-{{ domain }}"
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart cron service
+  when: eff_cronjob

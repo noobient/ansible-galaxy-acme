@@ -1,0 +1,9 @@
+---
+galaxy_info:
+  role_name: acme
+  author: Viktor Berke
+  description: "Obtain HTTPS certificates using Let's Encrypt ACME, acme.sh, and DNS-01"
+  license: license (MIT)
+  min_ansible_version: '2.10'
+  platforms: []
+  galaxy_tags: []

@@ -1,0 +1,14 @@
+---
+skip_list:
+  - git-latest
+  - package-latest
+  - fqcn[action]
+  - fqcn[action-core]
+  - yaml[comments] # TODO how do I restrict this to just require-starting-space?
+  - yaml[line-length]
+  - name # this is covered by yamllint with exceptions on include_role
+  - risky-shell-pipe
+  - schema[tasks] # TODO ansible-lint randomly complains, e.g. it/tftpd
+  - role-name
+  - schema[meta] # TODO ansible-lint believes the official dependency syntax is wrong
+  - meta-no-info # we leave platform empty

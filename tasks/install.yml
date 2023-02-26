@@ -1,0 +1,34 @@
+---
+- name: Install cron
+  package:
+    name: "cron{% if ansible_os_family == 'RedHat' %}ie{% endif %}"
+    state: latest
+  register: installed_cron
+  when: eff_cronjob and installed_cron is not defined
+
+# TODO On EL, cURL is installed by default. On top of that, on AlmaLinux 9, curl
+# is broken, and on Fedora, curl-minimal is broken. So just skip it altogether.
+# https://bugs.launchpad.net/tripleo/+bug/1953156
+- name: Install cURL
+  package:
+    name: curl
+    state: latest
+  register: installed_curl
+  when: installed_curl is not defined and ansible_os_family != 'RedHat'
+
+- name: Install dependencies
+  package:
+    name: "{{ packages }}"
+    state: latest
+  vars:
+    packages:
+      - git
+      - socat
+      - openssl
+  register: installed_acme_deps
+  when: installed_acme_deps is not defined
+
+- name: Obtain acme.sh sources
+  git:
+    repo: https://github.com/acmesh-official/acme.sh.git
+    dest: "{{ acme_sh_dir }}"

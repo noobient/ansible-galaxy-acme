@@ -1,0 +1,11 @@
+---
+- include_tasks: install.yml
+- include_tasks: acme.yml
+
+- include_role:
+    name: bviktor.setfcontext
+  vars:
+    path: '/root/.acme.sh'
+    type: 'cert_t'
+    pattern: "/root/.acme.sh(/.*)?"
+  when: ansible_os_family == 'RedHat'

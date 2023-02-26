@@ -1,0 +1,6 @@
+---
+acme_sh_dir: '/opt/acme.sh'
+eff_staging: "{{ staging | default(false) | bool }}"
+eff_wildcard: "{{ wildcard | default(false) | bool }}"
+eff_cronjob: "{{ cronjob | default(false) | bool }}"
+eff_sleep: "{{ sleep | default(20) | int }}"
