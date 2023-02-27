@@ -3,4 +3,8 @@ acme_sh_dir: '/opt/acme.sh'
 eff_staging: "{{ staging | default(false) | bool }}"
 eff_wildcard: "{{ wildcard | default(false) | bool }}"
 eff_cronjob: "{{ cronjob | default(false) | bool }}"
+
+# TODO this will always have to be casted in math expressions as well, because Ansible braindamage
+# https://stackoverflow.com/a/69109779/1708230
 eff_sleep: "{{ sleep | default(20) | int }}"
+eff_min_days: "{{ (min_days | default(60)) | int }}"

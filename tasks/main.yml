@@ -1,5 +1,7 @@
 ---
-- include_tasks: install.yml
+- include_tasks: deps.yml
+  when: installed_acme_deps is not defined
+
 - include_tasks: acme.yml
 
 - include_role:
@@ -9,3 +11,6 @@
     type: 'cert_t'
     pattern: "/root/.acme.sh(/.*)?"
   when: ansible_os_family == 'RedHat'
+
+- include_tasks: cron.yml
+  when: eff_cronjob

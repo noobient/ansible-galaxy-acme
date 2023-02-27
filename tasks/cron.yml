@@ -1,0 +1,16 @@
+---
+- name: Install cron
+  package:
+    name: "cron{% if ansible_os_family == 'RedHat' %}ie{% endif %}"
+    state: latest
+  register: installed_cron
+  when: installed_cron is not defined
+
+- name: Deploy acme.sh cronjob
+  template:
+    src: acme.j2
+    dest: "/etc/cron.d/acme-{{ domain }}"
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart cron service

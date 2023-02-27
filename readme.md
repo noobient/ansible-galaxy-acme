@@ -11,10 +11,11 @@ This role obtains HTTPS certificates using the ACME protocol from Let's Encrypt,
 | `domain` | true | `foobar.com` | Domain to obtain certificates for. |
 | `provider` | true | `cf` | DNS provider to use. See [How to use DNS API](https://github.com/acmesh-official/acme.sh/wiki/dnsapi) for details. E.g. if the command is `--dns dns_cf`, then this argument should be `cf`. |
 | `credential` | true | See in Examples | Dictionary holding all your `export ...` variables, as explained on the above link. |
-| `staging` | no | `true` | If `true`, uses staging servers instead of production. Use for testing. Defaults to `false`. |
 | `wildcard` | no | `true` | If `true`, obtains not only the base certificate, but the wildcard certificate too, via SAN. E.g. if the domain is `foobar.com`, the certificate will be valid for `*.foobar.com` as well. Defaults to `false`. |
 | `cronjob` | no | `true`| If `true`, deploy cronjob to automatically renew the certificate every month. Defaults to `false`. |
+| `staging` | no | `true` | If `true`, uses staging servers instead of production. Use for testing. Defaults to `false`. |
 | `sleep` | no | `60` | Wait this many seconds for DNS updates to propagate. Defaults to `20`. |
+| `min_days` | no | `45` | If the certificate already exists, and expires sooner than this many days, renew it. Defaults to `60`. Since Let's Encrypt certs are valid for **90** days, a value of `60` triggers a renewal if the cert is older than **30** days. This also means that you can effectively disable the renewal by setting this to `0`. Nevertheless, it's useful to leave it on, since it tests whether consecutive renewals in the future will work or not. |
 
 ## Examples
 
@@ -41,6 +42,7 @@ This role obtains HTTPS certificates using the ACME protocol from Let's Encrypt,
     wildcard: true
     cronjob: true
     sleep: 60
+    min_days: 45
 ```
 
 ## Return Values

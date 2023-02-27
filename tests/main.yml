@@ -1,29 +1,8 @@
 ---
 - hosts: 127.0.0.1
   tasks:
-    - include_role:
-        name: "{{ playbook_dir.split('/')[:-1] | last }}"
-      vars:
-        domain: 'acme-test.vault-tec.info'
-        provider: cf
-        credential:
-          CF_Token: "{{ lookup('ansible.builtin.env', 'CF_Token') }}"
-          CF_Account_ID: "{{ lookup('ansible.builtin.env', 'CF_Account_ID') }}"
-          CF_Zone_ID: "{{ lookup('ansible.builtin.env', 'CF_Zone_ID') }}"
-        wildcard: 'true'
-        cronjob: true
-        staging: true
-
-    # Idempotency
-    - include_role:
-        name: "{{ playbook_dir.split('/')[:-1] | last }}"
-      vars:
-        domain: acme-test.vault-tec.info
-        provider: 'cf'
-        credential:
-          CF_Token: "{{ lookup('ansible.builtin.env', 'CF_Token') }}"
-          CF_Account_ID: "{{ lookup('ansible.builtin.env', 'CF_Account_ID') }}"
-          CF_Zone_ID: "{{ lookup('ansible.builtin.env', 'CF_Zone_ID') }}"
-        wildcard: 'true'
-        cronjob: true
-        staging: true
+    - include_tasks: issuance.yml
+    - include_tasks: idempotency1.yml
+    - include_tasks: renewal.yml
+    - include_tasks: wildcard.yml
+    - include_tasks: idempotency2.yml

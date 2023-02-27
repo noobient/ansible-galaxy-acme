@@ -1,25 +1,43 @@
 ---
-- name: Obtain initial certs
+- name: Check for existing cert
+  stat:
+    path: "/root/.acme.sh/{{ domain }}/{{ domain }}.cer"
+  register: current_file
+
+# rc = 1 both when expires, and when doesn't exist / not a valid cert
+- name: Check current cert expiry
+  command:
+    cmd: "openssl x509 -checkend {{ eff_min_days | int * 86400 }} -noout -in /root/.acme.sh/{{ domain }}/{{ domain }}.cer"
+  changed_when: false
+  failed_when: current_expiry.rc != 0 and current_expiry.stderr | length
+  register: current_expiry
+  when: current_file.stat.exists
+
+- name: Check if current cert is wildcard
+  shell:
+    cmd: "openssl x509 -ext subjectAltName -noout -in /root/.acme.sh/{{ domain }}/{{ domain }}.cer | grep '*.{{ domain }}'"
+  changed_when: false
+  failed_when: false
+  register: current_wildcard
+  when: current_file.stat.exists
+
+- name: Obtain initial cert # noqa no-changed-when
   command:
     cmd: "{{ acme_sh_dir }}/acme.sh {% if eff_staging %}--staging{% else %}--server letsencrypt{% endif %} --keylength 4096 --issue --dns dns_{{ provider }} --dnssleep {{ eff_sleep }} --force -d {{ domain }}{% if eff_wildcard %} -d *.{{ domain }}{% endif %}"
-    creates: "/root/.acme.sh/{{ domain }}/fullchain.cer"
   environment: "{{ credential }}"
+  when: not current_file.stat.exists or (eff_wildcard and current_wildcard.rc != 0)
 
-- name: Check obtained certs
+- name: Renew existing cert # noqa no-changed-when
   command:
-    cmd: "{{ acme_sh_dir }}/acme.sh --info -d {{ domain }}"
+    cmd: "{{ acme_sh_dir }}/acme.sh {% if eff_staging %}--staging{% else %}--server letsencrypt{% endif %} --keylength 4096 --renew --dns dns_{{ provider }} --dnssleep {{ eff_sleep }} --force -d {{ domain }}{% if eff_wildcard %} -d *.{{ domain }}{% endif %}"
+  environment: "{{ credential }}"
+  when: current_file.stat.exists and current_expiry.rc != 0
+
+- name: Check obtained cert
+  command:
+    cmd: "openssl x509 -issuer -subject -dates -ext subjectAltName -noout -in /root/.acme.sh/{{ domain }}/{{ domain }}.cer"
   changed_when: false
-  register: acme_sh_info
+  register: openssl_info
 
 - debug:
-    msg: "{{ acme_sh_info.stdout_lines }}"
-
-- name: Deploy acme.sh cronjob
-  template:
-    src: acme.j2
-    dest: "/etc/cron.d/acme-{{ domain }}"
-    owner: root
-    group: root
-    mode: '0644'
-  notify: Restart cron service
-  when: eff_cronjob
+    msg: "{{ openssl_info.stdout_lines }}"

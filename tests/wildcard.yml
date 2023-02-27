@@ -1,0 +1,13 @@
+---
+# Wildcard replacement
+- include_role:
+    name: "{{ playbook_dir.split('/')[:-1] | last }}"
+  vars:
+    domain: acme-test.vault-tec.info
+    provider: 'cf'
+    credential:
+      CF_Token: "{{ lookup('ansible.builtin.env', 'CF_Token') }}"
+      CF_Account_ID: "{{ lookup('ansible.builtin.env', 'CF_Account_ID') }}"
+      CF_Zone_ID: "{{ lookup('ansible.builtin.env', 'CF_Zone_ID') }}"
+    wildcard: 'true'
+    staging: true
