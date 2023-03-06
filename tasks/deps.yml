@@ -2,7 +2,7 @@
 # Fix dumb apt
 - name: Update apt cache
   apt:
-    update_cache: yes
+    update_cache: true
   when: ansible_os_family == 'Debian'
 
 # TODO On EL, cURL is installed by default. On top of that, on AlmaLinux 9, curl
@@ -27,5 +27,5 @@
 - name: Obtain acme.sh sources
   git:
     repo: https://github.com/acmesh-official/acme.sh.git
-    dest: "{{ acme_sh_dir }}"
+    dest: "{{ acme_install_dir }}"
   register: installed_acme_deps

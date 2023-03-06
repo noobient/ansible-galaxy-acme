@@ -1,5 +1,13 @@
 ---
-acme_sh_dir: '/opt/acme.sh'
+acme_install_dir: '/opt/acme.sh'
+acme_deploy_dir: '/etc/acme'
+acme_domain_dir: "{{ acme_deploy_dir }}/{{ domain }}"
+
+deploy_cert_file: "{{ acme_domain_dir }}/{{ domain }}.cer"
+deploy_key_file: "{{ acme_domain_dir }}/{{ domain }}.key"
+deploy_ca_file: "{{ acme_domain_dir }}/ca.cer"
+deploy_fullchain_file: "{{ acme_domain_dir }}/fullchain.cer"
+
 eff_staging: "{{ staging | default(false) | bool }}"
 eff_wildcard: "{{ wildcard | default(false) | bool }}"
 eff_cronjob: "{{ cronjob | default(false) | bool }}"

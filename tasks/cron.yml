@@ -10,7 +10,7 @@
   systemd:
     name: "cron{% if ansible_os_family == 'RedHat' %}d{% endif %}.service"
     state: started
-    enabled: yes
+    enabled: true
 
 - name: Deploy acme.sh cronjob
   template:

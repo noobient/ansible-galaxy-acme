@@ -2,7 +2,16 @@
 - hosts: 127.0.0.1
   tasks:
     - include_tasks: issuance.yml
+    - include_tasks: print.yml
+
     - include_tasks: idempotency1.yml
+    - include_tasks: print.yml
+
     - include_tasks: renewal.yml
+    - include_tasks: print.yml
+
     - include_tasks: wildcard.yml
+    - include_tasks: print.yml
+
     - include_tasks: idempotency2.yml
+    - include_tasks: print.yml

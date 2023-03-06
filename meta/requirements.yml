@@ -1,2 +1,3 @@
 ---
+- src: bviktor.file_changed
 - src: bviktor.setfcontext

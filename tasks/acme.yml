@@ -1,13 +1,21 @@
 ---
+- name: Create cert deployment directory
+  file:
+    path: "{{ acme_domain_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0700'
+
 - name: Check for existing cert
   stat:
-    path: "/root/.acme.sh/{{ domain }}/{{ domain }}.cer"
+    path: "{{ deploy_cert_file }}"
   register: current_file
 
 # rc = 1 both when expires, and when doesn't exist / not a valid cert
 - name: Check current cert expiry
   command:
-    cmd: "openssl x509 -checkend {{ eff_min_days | int * 86400 }} -noout -in /root/.acme.sh/{{ domain }}/{{ domain }}.cer"
+    cmd: "openssl x509 -checkend {{ eff_min_days | int * 86400 }} -noout -in {{ deploy_cert_file }}"
   changed_when: false
   failed_when: current_expiry.rc != 0 and current_expiry.stderr | length
   register: current_expiry
@@ -15,29 +23,61 @@
 
 - name: Check if current cert is wildcard
   shell:
-    cmd: "openssl x509 -ext subjectAltName -noout -in /root/.acme.sh/{{ domain }}/{{ domain }}.cer | grep '*.{{ domain }}'"
+    cmd: "openssl x509 -ext subjectAltName -noout -in {{ deploy_cert_file }} | grep '*.{{ domain }}'"
   changed_when: false
   failed_when: false
   register: current_wildcard
   when: current_file.stat.exists
 
-- name: Obtain initial cert # noqa no-changed-when
+- include_role:
+    name: bviktor.file_changed
+  vars:
+    path: "{{ deploy_cert_file }}"
+    mode: before
+
+- name: Obtain initial cert
   command:
-    cmd: "{{ acme_sh_dir }}/acme.sh {% if eff_staging %}--staging{% else %}--server letsencrypt{% endif %} --keylength 4096 --issue --dns dns_{{ provider }} --dnssleep {{ eff_sleep }} --force -d {{ domain }}{% if eff_wildcard %} -d *.{{ domain }}{% endif %}"
+    cmd: "{{ acme_install_dir }}/acme.sh {% if eff_staging %}--staging{% else %}--server letsencrypt{% endif %} --ecc --issue --dns dns_{{ provider }} --dnssleep {{ eff_sleep }} --force --domain {{ domain }}{% if eff_wildcard %} --domain *.{{ domain }}{% endif %}"
   environment: "{{ credential }}"
+  changed_when: false
   when: not current_file.stat.exists or (eff_wildcard and current_wildcard.rc != 0)
 
-- name: Renew existing cert # noqa no-changed-when
+- name: Renew existing cert
   command:
-    cmd: "{{ acme_sh_dir }}/acme.sh {% if eff_staging %}--staging{% else %}--server letsencrypt{% endif %} --keylength 4096 --renew --dns dns_{{ provider }} --dnssleep {{ eff_sleep }} --force -d {{ domain }}{% if eff_wildcard %} -d *.{{ domain }}{% endif %}"
+    cmd: "{{ acme_install_dir }}/acme.sh {% if eff_staging %}--staging{% else %}--server letsencrypt{% endif %} --ecc --renew --dns dns_{{ provider }} --dnssleep {{ eff_sleep }} --force --domain {{ domain }}{% if eff_wildcard %} --domain *.{{ domain }}{% endif %}"
   environment: "{{ credential }}"
+  changed_when: false
   when: current_file.stat.exists and current_expiry.rc != 0
+
+# Unlike --issue, --renew updates the files in the target automatically, but it won't hurt to copy twice
+- name: Deploy cert
+  command:
+    cmd: "{{ acme_install_dir }}/acme.sh --install-cert --ecc --domain {{ domain }}{% if eff_wildcard %} --domain *.{{ domain }}{% endif %} --cert-file {{ deploy_cert_file }} --key-file {{ deploy_key_file }} --ca-file {{ deploy_ca_file }} --fullchain-file {{ deploy_fullchain_file }}"
+  changed_when: false
+
+- include_role:
+    name: bviktor.file_changed
+  vars:
+    path: "{{ deploy_cert_file }}"
+    mode: after
+
+- debug:
+    msg: "{% if file_changed.changed %}The certificate has been updated.{% else %}No change has been made to the certificate.{% endif %}"
+  changed_when: file_changed.changed
 
 - name: Check obtained cert
   command:
-    cmd: "openssl x509 -issuer -subject -dates -ext subjectAltName -noout -in /root/.acme.sh/{{ domain }}/{{ domain }}.cer"
+    cmd: "openssl x509 -issuer -subject -dates -ext subjectAltName -noout -in {{ deploy_cert_file }}"
   changed_when: false
   register: openssl_info
 
 - debug:
     msg: "{{ openssl_info.stdout_lines }}"
+
+- set_fact:
+    acme:
+      cert_file: "{{ deploy_cert_file }}"
+      key_file: "{{ deploy_key_file }}"
+      ca_file: "{{ deploy_ca_file }}"
+      fullchain_file: "{{ deploy_fullchain_file }}"
+      changed: "{{ file_changed.changed | bool }}"
