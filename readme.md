@@ -49,8 +49,8 @@ This role obtains HTTPS certificates using the ACME protocol from Let's Encrypt,
 
 | Key | Type | Example | Description |
 |---|---|---|---|
-| `acme.changed` | boolean | `true` if `acme.cert_file` has been updated, `false` if not. |
-| `acme.san` | list | List of certificate Subject Alternative Names. |
+| `acme.changed` | boolean | `false`  | `true` if `acme.cert_file` has been updated, `false` if not. |
+| `acme.san` | list | `[*.foo.com, foo.com]` | List of certificate Subject Alternative Names. |
 | `acme.cert_file` | string | `/etc/foo.com/foo.com.cer` | Path to deployed certificate. |
 | `acme.key_file` | string | `/etc/foo.com/foo.com.key` | Path to deployed private key. |
 | `acme.ca_file` | string | `/etc/foo.com/ca.cer` | Path to deployed CA certificate. |
