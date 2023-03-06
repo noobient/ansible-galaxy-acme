@@ -81,3 +81,4 @@
       ca_file: "{{ deploy_ca_file }}"
       fullchain_file: "{{ deploy_fullchain_file }}"
       changed: "{{ file_changed.changed | bool }}"
+      san: "{{ (openssl_info.stdout_lines[5] | replace(' ', '') | replace('DNS:', '')).split(',') }}"
