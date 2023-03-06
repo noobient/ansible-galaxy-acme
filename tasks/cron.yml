@@ -6,6 +6,12 @@
   register: installed_cron
   when: installed_cron is not defined
 
+- name: Enable cron service
+  systemd:
+    name: "cron{% if ansible_os_family == 'RedHat' %}d{% endif %}.service"
+    state: started
+    enabled: yes
+
 - name: Deploy acme.sh cronjob
   template:
     src: acme.j2
