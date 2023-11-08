@@ -21,7 +21,7 @@ This role obtains HTTPS certificates using the ACME protocol from Let's Encrypt,
 
 ```yml
 - include_role:
-    name: bviktor.acme
+    name: noobient.acme
   vars:
     domain: foo.com
     provider: cf
@@ -30,7 +30,7 @@ This role obtains HTTPS certificates using the ACME protocol from Let's Encrypt,
       CF_Email: 'foo@bar.com'
 
 - include_role:
-    name: bviktor.acme
+    name: noobient.acme
   vars:
     domain: bar.com
     provider: cf
