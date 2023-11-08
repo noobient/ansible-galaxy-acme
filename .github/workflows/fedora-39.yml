@@ -1,5 +1,5 @@
 ---
-name: Fedora 37
+name: Fedora 39
 
 on: # yamllint disable-line rule:truthy
   push:
@@ -22,7 +22,7 @@ jobs:
           CF_Zone_ID: ${{ secrets.CF_Zone_ID }}
         run: >
             CONT_ID=$(podman run --rm -v ${{ github.workspace }}:/repo -v /sys/fs/cgroup:/sys/fs/cgroup:ro
-            --tmpfs /tmp --tmpfs /run --privileged --detach bviktor/ansible-systemd-fedora:37) &&
+            --tmpfs /tmp --tmpfs /run --privileged --detach bviktor/ansible-systemd-fedora:39) &&
             podman exec --env-file tests/env.list ${CONT_ID} /bin/bash -c
             "if [ -f requirements.yml ]; then ansible-galaxy role install --force -r requirements.yml -p ..; fi &&
             ANSIBLE_ROLES_PATH=.. ANSIBLE_FORCE_COLOR=true ansible-playbook tests/main.yml" &&
