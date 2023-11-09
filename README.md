@@ -16,6 +16,7 @@ This role obtains HTTPS certificates using the ACME protocol from Let's Encrypt,
 | `staging` | no | `true` | If `true`, uses staging servers instead of production. Use for testing. Defaults to `false`. |
 | `sleep` | no | `60` | Wait this many seconds for DNS updates to propagate. Defaults to `20`. |
 | `min_days` | no | `45` | If the certificate already exists, and expires sooner than this many days, renew it. Defaults to `60`. Since Let's Encrypt certs are valid for **90** days, a value of `60` triggers a renewal if the cert is older than **30** days. This also means that you can effectively disable the renewal by setting this to `0`. Nevertheless, it's useful to leave it on, since it tests whether consecutive renewals in the future will work or not. |
+| `reload_cmd` | no | `/sbin/nginx -s reload` | If specified and `cronjob` is `true`, this command is also added to the cronjob, and runs 1 hour after the renewal. Otherwise no reload command is run. |
 
 ## Examples
 
@@ -43,6 +44,7 @@ This role obtains HTTPS certificates using the ACME protocol from Let's Encrypt,
     cronjob: true
     sleep: 60
     min_days: 45
+    reload_cmd: /sbin/nginx -s reload
 ```
 
 ## Return Values

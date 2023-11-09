@@ -1,5 +1,6 @@
 # Minutes are pseudo-random, to ensure idempotency, but still don't flood ACME with all certs at once.
 {{ domain.split('.')[0] | length % 6 }}{{ domain | length % 10 }} 07 1 * * root {{ acme_install_dir }}/acme.sh {% if eff_staging %}--staging{% else %}--server letsencrypt{% endif %} --ecc --renew --dns dns_{{ provider }} --dnssleep {{ eff_sleep }} --force --domain {{ domain }}{% if eff_wildcard %} --domain *.{{ domain }}{% endif %} >> /var/log/letsencrypt 2>&1
 
-# TODO make params for this
-#1 08 1 * * root /sbin/nginx -s reload
+{% if reload_cmd is defined and reload_cmd | length %}
+{{ domain.split('.')[0] | length % 6 }}{{ domain | length % 10 }} 08 1 * * root {{ reload_cmd }}
+{% endif %}
