@@ -1,6 +1,9 @@
 ---
 - hosts: 127.0.0.1
   tasks:
+    - include_vars:
+        file: ../vars/test.yml
+
     - include_tasks: issuance.yml
     - include_tasks: print.yml
 

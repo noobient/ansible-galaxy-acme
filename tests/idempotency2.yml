@@ -3,7 +3,7 @@
 - include_role:
     name: "{{ playbook_dir.split('/')[:-1] | last }}"
   vars:
-    domain: "{{ ansible_distribution | lower }}{{ ansible_distribution_major_version }}.vault-tec.info"
+    domain: "{{ noobient_acme_test_domain }}"
     provider: 'cf'
     credential:
       CF_Token: "{{ lookup('ansible.builtin.env', 'CF_Token') }}"
