@@ -8,11 +8,11 @@ deploy_key_file: "{{ acme_domain_dir }}/{{ domain }}.key"
 deploy_ca_file: "{{ acme_domain_dir }}/ca.cer"
 deploy_fullchain_file: "{{ acme_domain_dir }}/fullchain.cer"
 
-eff_staging: "{{ staging | default(false) | bool }}"
-eff_wildcard: "{{ wildcard | default(false) | bool }}"
-eff_cronjob: "{{ cronjob | default(false) | bool }}"
-
+eff_wildcard: "{% if wildcard is defined and wildcard | string | length %}{{ wildcard }}{% else %}false{% endif %}"
+eff_cronjob: "{% if cronjob is defined and cronjob | string | length %}{{ cronjob }}{% else %}false{% endif %}"
+eff_staging: "{% if staging is defined and staging | string | length %}{{ staging }}{% else %}false{% endif %}"
 # TODO this will always have to be casted in math expressions as well, because Ansible braindamage
 # https://stackoverflow.com/a/69109779/1708230
-eff_sleep: "{{ sleep | default(20) | int }}"
-eff_min_days: "{{ (min_days | default(60)) | int }}"
+eff_sleep: "{% if sleep is defined and sleep | string | length %}{{ sleep }}{% else %}20{% endif %}"
+eff_min_days: "{% if min_days is defined and min_days | string | length %}{{ min_days }}{% else %}60{% endif %}"
+eff_reload_cmd: "{% if reload_cmd is defined and reload_cmd | string | length %}{{ reload_cmd }}{% endif %}"

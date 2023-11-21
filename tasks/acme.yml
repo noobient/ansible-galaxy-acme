@@ -37,14 +37,14 @@
 
 - name: Obtain initial cert
   command:
-    cmd: "{{ acme_install_dir }}/acme.sh {% if eff_staging %}--staging{% else %}--server letsencrypt{% endif %} --ecc --issue --dns dns_{{ provider }} --dnssleep {{ eff_sleep }} --force --domain {{ domain }}{% if eff_wildcard %} --domain *.{{ domain }}{% endif %}"
+    cmd: "{{ acme_install_dir }}/acme.sh {% if eff_staging | bool %}--staging{% else %}--server letsencrypt{% endif %} --ecc --issue --dns dns_{{ provider }} --dnssleep {{ eff_sleep | int }} --force --domain {{ domain }}{% if eff_wildcard | bool %} --domain *.{{ domain }}{% endif %}"
   environment: "{{ credential }}"
   changed_when: false
-  when: not current_file.stat.exists or (eff_wildcard and current_wildcard.rc != 0)
+  when: not current_file.stat.exists or (eff_wildcard | bool and current_wildcard.rc != 0)
 
 - name: Renew existing cert
   command:
-    cmd: "{{ acme_install_dir }}/acme.sh {% if eff_staging %}--staging{% else %}--server letsencrypt{% endif %} --ecc --renew --dns dns_{{ provider }} --dnssleep {{ eff_sleep }} --force --domain {{ domain }}{% if eff_wildcard %} --domain *.{{ domain }}{% endif %}"
+    cmd: "{{ acme_install_dir }}/acme.sh {% if eff_staging | bool %}--staging{% else %}--server letsencrypt{% endif %} --ecc --renew --dns dns_{{ provider }} --dnssleep {{ eff_sleep | int }} --force --domain {{ domain }}{% if eff_wildcard | bool %} --domain *.{{ domain }}{% endif %}"
   environment: "{{ credential }}"
   changed_when: false
   when: current_file.stat.exists and current_expiry.rc != 0
@@ -52,7 +52,7 @@
 # Unlike --issue, --renew updates the files in the target automatically, but it won't hurt to copy twice
 - name: Deploy cert
   command:
-    cmd: "{{ acme_install_dir }}/acme.sh --install-cert --ecc --domain {{ domain }}{% if eff_wildcard %} --domain *.{{ domain }}{% endif %} --cert-file {{ deploy_cert_file }} --key-file {{ deploy_key_file }} --ca-file {{ deploy_ca_file }} --fullchain-file {{ deploy_fullchain_file }}"
+    cmd: "{{ acme_install_dir }}/acme.sh --install-cert --ecc --domain {{ domain }}{% if eff_wildcard | bool %} --domain *.{{ domain }}{% endif %} --cert-file {{ deploy_cert_file }} --key-file {{ deploy_key_file }} --ca-file {{ deploy_ca_file }} --fullchain-file {{ deploy_fullchain_file }}"
   changed_when: false
 
 - include_role:

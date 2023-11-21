@@ -1,2 +1,4 @@
 ---
-noobient_acme_test_domain: "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version }}-{{ ansible_date_time.hour }}{{ ansible_date_time.minute }}{{ ansible_date_time.second }}.vault-tec.info"
+noobient_acme_test_prefix: "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version }}-{{ ansible_date_time.hour }}{{ ansible_date_time.minute }}{{ ansible_date_time.second }}"
+noobient_acme_test_domain: "{{ noobient_acme_test_prefix }}a.vault-tec.info"
+noobient_acme_test_domain_2: "{{ noobient_acme_test_prefix }}b.vault-tec.info"

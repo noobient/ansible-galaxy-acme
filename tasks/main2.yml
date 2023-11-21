@@ -1,0 +1,16 @@
+---
+- include_tasks: deps.yml
+  when: installed_acme_deps is not defined
+
+- include_tasks: acme.yml
+
+- include_role:
+    name: noobient.setfcontext
+  vars:
+    path: "{{ acme_deploy_dir }}"
+    type: 'cert_t'
+    pattern: "{{ acme_deploy_dir }}(/.*)?"
+  when: ansible_os_family == 'RedHat'
+
+- include_tasks: cron.yml
+  when: eff_cronjob | bool

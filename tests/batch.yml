@@ -1,0 +1,8 @@
+---
+# Idempotency and batch
+- include_role:
+    name: "{{ playbook_dir.split('/')[:-1] | last }}"
+  vars:
+    acme_batch:
+    - { domain: "{{ noobient_acme_test_domain_2 }}", provider: 'cf', credential: { CF_Token: "{{ lookup('ansible.builtin.env', 'CF_Token') }}", CF_Account_ID: "{{ lookup('ansible.builtin.env', 'CF_Account_ID') }}", CF_Zone_ID: "{{ lookup('ansible.builtin.env', 'CF_Zone_ID') }}" }, cronjob: 'true', staging: 1 }
+    - { domain: "{{ noobient_acme_test_domain }}", provider: 'cf', credential: { CF_Token: "{{ lookup('ansible.builtin.env', 'CF_Token') }}", CF_Account_ID: "{{ lookup('ansible.builtin.env', 'CF_Account_ID') }}", CF_Zone_ID: "{{ lookup('ansible.builtin.env', 'CF_Zone_ID') }}" }, wildcard: yes, staging: 'true' }

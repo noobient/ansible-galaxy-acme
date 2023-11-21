@@ -1,0 +1,22 @@
+---
+# set_fact appears to be async, so acme_new may be undefined without individual calls
+- set_fact:
+    acme_new: "{ '{{ item.domain }}.cert_file': '{{ item.domain }}.cer' }"
+
+# the closes thing to add()
+- set_fact:
+    acme: "{{ acme | combine( acme_new ) }}"
+
+# TODO still won't work. The combine part adds the previous stuff to the new keys.
+- set_fact:
+    acme_new: "{ '{{ item.domain }}.key_file': '{{ item.domain }}.key' }"
+
+# the closes thing to add()
+- set_fact:
+    acme: "{{ acme | combine( acme_new ) }}"
+
+# the closes thing to unset_fact
+- set_fact:
+    acme_new:
+
+- include_tasks: print.yml

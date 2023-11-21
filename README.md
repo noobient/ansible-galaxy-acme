@@ -8,9 +8,10 @@ This role obtains HTTPS certificates using the ACME protocol from Let's Encrypt,
 
 | Name | Required | Example | Description |
 |---|---|---|---|
-| `domain` | true | `foobar.com` | Domain to obtain certificates for. |
-| `provider` | true | `cf` | DNS provider to use. See [How to use DNS API](https://github.com/acmesh-official/acme.sh/wiki/dnsapi) for details. E.g. if the command is `--dns dns_cf`, then this argument should be `cf`. |
-| `credential` | true | See in Examples | Dictionary holding all your `export ...` variables, as explained on the above link. |
+| `acme_batch` | no | `<list>` | Supply the below parameters as a list, see examples. |
+| `domain` | yes | `foobar.com` | Domain to obtain certificates for. |
+| `provider` | yes | `cf` | DNS provider to use. See [How to use DNS API](https://github.com/acmesh-official/acme.sh/wiki/dnsapi) for details. E.g. if the command is `--dns dns_cf`, then this argument should be `cf`. |
+| `credential` | yes | See in Examples | Dictionary holding all your `export ...` variables, as explained on the above link. |
 | `wildcard` | no | `true` | If `true`, obtains not only the base certificate, but the wildcard certificate too, via SAN. E.g. if the domain is `foobar.com`, the certificate will be valid for `*.foobar.com` as well. Defaults to `false`. |
 | `cronjob` | no | `true`| If `true`, deploy cronjob to automatically renew the certificate every month. Defaults to `false`. |
 | `staging` | no | `true` | If `true`, uses staging servers instead of production. Use for testing. Defaults to `false`. |
