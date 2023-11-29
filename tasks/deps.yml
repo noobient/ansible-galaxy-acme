@@ -1,10 +1,4 @@
 ---
-# Fix dumb apt
-- name: Update apt cache
-  apt:
-    update_cache: true
-  when: ansible_os_family == 'Debian'
-
 # TODO On EL, cURL is installed by default. On top of that, on AlmaLinux 9, curl
 # is broken, and on Fedora, curl-minimal is broken. So just skip it altogether.
 # https://bugs.launchpad.net/tripleo/+bug/1953156

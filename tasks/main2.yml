@@ -1,4 +1,7 @@
 ---
+- include_tasks: apt_cache.yml
+  when: ansible_pkg_mgr == 'apt' and noobient_apt_cache_updated is not defined
+
 - include_tasks: deps.yml
   when: installed_acme_deps is not defined
 
