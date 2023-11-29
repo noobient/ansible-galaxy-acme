@@ -1,5 +1,5 @@
 ---
-- name: Update apt cache
+- name: Update APT cache
   apt:
     update_cache: true
   register: noobient_apt_cache_updated
