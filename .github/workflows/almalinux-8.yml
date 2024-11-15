@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Obtain sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Test Galaxy role
         env:
           CF_Token: ${{ secrets.CF_Token }}
