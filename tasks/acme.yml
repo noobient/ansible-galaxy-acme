@@ -17,7 +17,7 @@
   command:
     cmd: "openssl x509 -checkend {{ eff_min_days | int * 86400 }} -noout -in {{ deploy_cert_file }}"
   changed_when: false
-  failed_when: current_expiry.rc != 0 and current_expiry.stderr | length
+  failed_when: current_expiry.rc != 0 and current_expiry.stderr | length > 0
   register: current_expiry
   when: current_file.stat.exists
 
