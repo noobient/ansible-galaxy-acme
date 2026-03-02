@@ -14,7 +14,7 @@
   loop_control:
     # make sure we don't leak credentials to stdout lol
     label: "{{ item.domain }}"
-  when: (acme_batch is defined) and (acme_batch.__class__.__name__ == 'list')
+  when: (acme_batch is defined) and (acme_batch | type_debug == 'list')
 
 - include_tasks: main2.yml
-  when: (acme_batch is not defined) or (acme_batch.__class__.__name__ != 'list')
+  when: (acme_batch is not defined) or (acme_batch | type_debug != 'list')

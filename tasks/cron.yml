@@ -1,14 +1,14 @@
 ---
 - name: Install cron
   package:
-    name: "cron{% if ansible_os_family == 'RedHat' %}ie{% endif %}"
+    name: "cron{% if ansible_facts['os_family'] == 'RedHat' %}ie{% endif %}"
     state: latest
   register: installed_cron
   when: installed_cron is not defined
 
 - name: Enable cron service
   systemd:
-    name: "cron{% if ansible_os_family == 'RedHat' %}d{% endif %}.service"
+    name: "cron{% if ansible_facts['os_family'] == 'RedHat' %}d{% endif %}.service"
     state: started
     enabled: true
 
