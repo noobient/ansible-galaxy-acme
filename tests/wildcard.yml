@@ -11,3 +11,4 @@
       CF_Zone_ID: "{{ lookup('ansible.builtin.env', 'CF_Zone_ID') }}"
     wildcard: 'true'
     staging: true
+    sleep: 30

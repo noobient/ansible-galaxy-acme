@@ -12,3 +12,4 @@
     wildcard: 'false'
     cronjob: true
     staging: true
+    sleep: 30

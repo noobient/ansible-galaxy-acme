@@ -11,3 +11,4 @@
       CF_Zone_ID: "{{ lookup('ansible.builtin.env', 'CF_Zone_ID') }}"
     staging: true
     min_days: '90'
+    sleep: 30
